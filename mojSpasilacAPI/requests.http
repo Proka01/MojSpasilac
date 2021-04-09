@@ -1,0 +1,83 @@
+###
+POST http://localhost:3000/korisnici/signup HTTP/1.1
+content-type: application/json
+
+{
+    "username": "mihailo",
+    "password": "1234"
+}
+
+###
+POST http://localhost:3000/korisnici/login HTTP/1.1
+content-type: application/json
+
+{
+    "username": "mihailo",
+    "password": "1234"
+}
+
+
+###
+POST http://localhost:3000/recepti HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9rb3Jpc25pa2EiOjE0LCJ2ZXJpZmlrb3ZhbiI6MCwiaWF0IjoxNjEwODAyMDkyfQ.2Xu_dSfWfNJca7NnjUi2_fbVJQQF4DH2UHSaXFPT4NM
+
+{
+    "naziv":"recept1",
+    "autor": "14",
+    "opis": "ovo je neki opis",
+    "sastojci": [{"id_sastojka":"1", "kolicina":"2 deci"},{"id_sastojka":"2", "kolicina":"po ukusu"},{"id_sastojka":"3", "kolicina":"1389 grama"}],
+    "koraci": [{"tekst":"korak1"},{"tekst":"korak2"},{"tekst":"korak3"},{"tekst":"korak4"}]
+}
+###
+POST http://grickapi.asprogram.com/recepti HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9rb3Jpc25pa2EiOjE0LCJ2ZXJpZmlrb3ZhbiI6MCwiaWF0IjoxNjEwODAyMDkyfQ.2Xu_dSfWfNJca7NnjUi2_fbVJQQF4DH2UHSaXFPT4NM
+
+{
+    "naziv":"recept30šš",
+    "opis": "ovo je nekičč opis",
+    "sastojci": [{"id_sastojka":"1", "kolicina":"2 deci"},{"id_sastojka":"2", "kolicina":"po ukusu"},{"id_sastojka":"3", "kolicina":"1389 grama"}],
+    "koraci": [{"tekst":"korak1"},{"tekst":"korak2"},{"tekst":"korak3"},{"tekst":"korak4"}]
+}
+
+###
+GET http://localhost:3000/recepti HTTP/1.1
+
+###
+GET http://localhost:3000/recepti HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9rb3Jpc25pa2EiOjE0LCJ2ZXJpZmlrb3ZhbiI6MCwiaWF0IjoxNjEwODAyMDkyfQ.2Xu_dSfWfNJca7NnjUi2_fbVJQQF4DH2UHSaXFPT4NM
+
+### MOJI
+GET http://localhost:3000/recepti/moji HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9rb3Jpc25pa2EiOjE0LCJ2ZXJpZmlrb3ZhbiI6MCwiaWF0IjoxNjEwODAyMDkyfQ.2Xu_dSfWfNJca7NnjUi2_fbVJQQF4DH2UHSaXFPT4NM
+
+### OMILJENI
+GET http://localhost:3000/recepti/omiljeni HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9rb3Jpc25pa2EiOjE0LCJ2ZXJpZmlrb3ZhbiI6MCwiaWF0IjoxNjEwODAyMDkyfQ.2Xu_dSfWfNJca7NnjUi2_fbVJQQF4DH2UHSaXFPT4NM
+
+
+###
+POST http://localhost:3000/recepti/16/like HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9rb3Jpc25pa2EiOjE0LCJ2ZXJpZmlrb3ZhbiI6MCwiaWF0IjoxNjEwODAyMDkyfQ.2Xu_dSfWfNJca7NnjUi2_fbVJQQF4DH2UHSaXFPT4NM
+
+###
+POST http://localhost:3000/recepti/16/dislike HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9rb3Jpc25pa2EiOjE0LCJ2ZXJpZmlrb3ZhbiI6MCwiaWF0IjoxNjEwODAyMDkyfQ.2Xu_dSfWfNJca7NnjUi2_fbVJQQF4DH2UHSaXFPT4NM
+
+### SPISAK
+GET http://localhost:3000/spisak HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9rb3Jpc25pa2EiOjE0LCJ2ZXJpZmlrb3ZhbiI6MCwiaWF0IjoxNjExMTgxMTgwfQ.TNW2ocSnLDwDRbClRj1mJyPHIvhZc5doCWPOvB8yD6E
+
+###
+POST http://localhost:3000/spisak/dodaj/1 HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9rb3Jpc25pa2EiOjE0LCJ2ZXJpZmlrb3ZhbiI6MCwiaWF0IjoxNjExMTgxMTgwfQ.TNW2ocSnLDwDRbClRj1mJyPHIvhZc5doCWPOvB8yD6E
+
+###
+POST http://localhost:3000/spisak/obrisi/3 HTTP/1.1
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZF9rb3Jpc25pa2EiOjE0LCJ2ZXJpZmlrb3ZhbiI6MCwiaWF0IjoxNjExMTgxMTgwfQ.TNW2ocSnLDwDRbClRj1mJyPHIvhZc5doCWPOvB8yD6E
