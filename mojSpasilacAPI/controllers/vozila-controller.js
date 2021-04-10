@@ -2,7 +2,7 @@ const vozila = require('../database/tabela-vozila');
 
 async function dodajVozilo(req,res){
   try{
-    if(req.dekriptovan.id_korisnika != 3)
+    if(req.dekriptovan.id_tipa_korisnika != 3)
     {
         res.status(403).end();
         return;
