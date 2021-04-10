@@ -31,7 +31,6 @@ public class LoginActivity extends AppCompatActivity {
     private Button eLogin;
     private TextView eRegister;
 
-
     public SharedPreferences sharedPreferences;
     SharedPreferences.Editor sharedPreferencesEditor;
 

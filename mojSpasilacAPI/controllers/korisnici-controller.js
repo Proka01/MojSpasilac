@@ -3,7 +3,7 @@ const {generisiToken}=require('../auth/jwt');
 const bcrypt = require('bcrypt');
 const { JsonWebTokenError } = require('jsonwebtoken');
 const saltRounds = 10;
-
+    
 async function prikazi(req, res) {
   try{
     const s =await korisnici.select();
@@ -13,7 +13,7 @@ async function prikazi(req, res) {
     console.error(err);
     res.status(500).json(err);
   }
-}
+} 
 
 async function prikaziJedan(req, res) {
   try{
