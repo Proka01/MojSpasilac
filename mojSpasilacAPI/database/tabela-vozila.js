@@ -40,25 +40,22 @@ const vozila = {
             }
           }
       }
-      //lista_vozila[0].prijava = lista_prijava[0];
-      //for(let i = 0; i < )
-      /*for (let v of lista_vozila) {
-        for (let l of lista_vozila) {
-            if(v.id_prijave == l.id_prijave) v.prijava=l;
-          }
-      }*/
-
-      /*lista_vozila.forEach(v => {
-          lista_prijava.forEach(l => {
-              if(v.id_prijave == l.id_prijave)
-              {
-                  //v.prijava = l;
-                  break;
-              }
-          });
-      });*/
       conn.end();
       return lista_vozila;
+    } catch (err) {
+      throw err;
+    }
+  },
+  insertLok: async function(id_korisnika, lok){
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      const res = await conn.query("UPDATE "+tabela+" SET lokacija_vozila_x=?, lokacija_vozila_y=? WHERE id_korisnika=?", [lok.lokacija_vozila_x,lok.lokacija_vozila_y,id_korisnika]);
+      //console.log(res);
+      if(res.affectedRows==0)
+        throw new Error('Nije uspelo upisivanje u bazu');
+      conn.end();
+      return res;
     } catch (err) {
       throw err;
     }
