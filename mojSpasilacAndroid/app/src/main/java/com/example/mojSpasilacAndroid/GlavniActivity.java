@@ -11,6 +11,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -283,9 +284,17 @@ public class GlavniActivity extends AppCompatActivity implements AdapterView.OnI
 
     private void validate(ArrayList<Osoba> osobe,double latitude,double longtitude)
     {
-        AsyncHttpClient client = new AsyncHttpClient();
+        AsyncHttpClient client = new AsyncHttpClient(true,80,443);
         JSONObject bodyJSON=new JSONObject();
         StringEntity bodySE = null;
+
+        SharedPreferences sharedPreferences;
+        sharedPreferences =getApplicationContext().getSharedPreferences("KorisniciDB", MODE_PRIVATE); //GlavniActivity.this
+        String token = sharedPreferences.getString("Token", "");
+        Log.i("ws", "-----------TOOOOOOOOOOOOOKEN " + token);
+        client.setAuthenticationPreemptive(true);
+        client.addHeader("Authorization", "Bearer " + token);
+
 
 
         try {
@@ -299,13 +308,13 @@ public class GlavniActivity extends AppCompatActivity implements AdapterView.OnI
         } catch (UnsupportedEncodingException | JSONException e) {
             e.printStackTrace();
         }
-        client.post(null, "https://mojspasilac.asprogram.com/api/korisnici/login", bodySE, "application/json", new AsyncHttpResponseHandler() {
+        client.post(null, "https://mojspasilac.asprogram.com/api/prijave", bodySE, "application/json", new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 // called when response HTTP status is "200 OK"
 
 
-
+                Toast.makeText(GlavniActivity.this, "Uspesna prijava", Toast.LENGTH_SHORT).show();
 
                 //startActivity(new Intent(LoginActivity.this, GlavniActivity.class));
                 //finish();
@@ -316,11 +325,11 @@ public class GlavniActivity extends AppCompatActivity implements AdapterView.OnI
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
                 if(statusCode == 0)
-                    Toast.makeText(GlavniActivity.this, "Neuspešno logovanje. Proverite konekciju sa internetom", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GlavniActivity.this, "Neuspešna prijava. Proverite konekciju sa internetom", Toast.LENGTH_SHORT).show();
                 else if(statusCode == 403)
-                    Toast.makeText(GlavniActivity.this, "Neuspešno logovanje. Korisničko ime ili lozinka nisu ispravni", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GlavniActivity.this, "403 je", Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(GlavniActivity.this, "Neuspešno logovanje", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(GlavniActivity.this, "Neuspešna prijava", Toast.LENGTH_SHORT).show();
 
                 Log.i("ws", "---->>onFailure : " + statusCode);
             }
