@@ -27,6 +27,17 @@ const prijave = {
     } catch (err) {
       throw err;
     }
+  },
+  nadjiLokaciju(lista, id_korisnika){
+    try{
+      for(let i = 0; i < lista.length; i++)
+      {
+        if(lista[i].id_korisnika == id_korisnika) return lista[i];
+      }
+      console.log("prazan" + id_korisnika);
+    } catch (err) {
+    throw err;
+  }
   }
 }
 
