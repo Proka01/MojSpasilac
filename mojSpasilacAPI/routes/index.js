@@ -8,5 +8,7 @@ router.get('/', function(req, res, next) {
 
 router.use('/korisnici', require('./../routes/korisnici'));
 router.use('/prijave', require('./../routes/prijave'));
+router.use('/vozila', require('./../routes/vozila'));
+
 
 module.exports = router;
