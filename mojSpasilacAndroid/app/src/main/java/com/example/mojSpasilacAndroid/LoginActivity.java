@@ -137,7 +137,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 sharedPreferencesEditor.putString("Username", userName);
                 sharedPreferencesEditor.putString("Password", userPassword);
-                sharedPreferencesEditor.putInt("id_tipa_korisnika",2);// MOZDA I NE TREBA OVO
+                sharedPreferencesEditor.putInt("id_tipa_korisnika",3);// MOZDA I NE TREBA OVO
                 eName.setText(userName);
                 ePassword.setText(userPassword);
 
