@@ -15,7 +15,23 @@ async function dodajVozilo(req,res){
     console.error(err);
     res.status(500).json(err);
   }}
+async function vratiVozila(req, res){
+    try{
+        if(req.dekriptovan.id_tipa_korisnika != 1){
+            res.status(403).end();
+            console.log("nije admin");
+            return;
+        }
+        const s = await vozila.svaVozila();
+        res.status(200).json(s);
+    }
+    catch(err){
+        console.error(err);
+        res.status(500).json(err);
+      }
+}
 
 module.exports = {
-  dodajVozilo
+  dodajVozilo,
+  vratiVozila
 };

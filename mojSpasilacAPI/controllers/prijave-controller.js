@@ -15,7 +15,23 @@ async function novaPrijava(req,res){
     console.error(err);
     res.status(500).json(err);
   }}
+async function aktivnePrijave(req, res){
+  try{
+    if(req.dekriptovan.id_tipa_korisnika != 1){
+        res.status(403).end();
+        console.log("nije admin");
+        return;
+    }
+    const s = await prijave.select();
+    res.status(200).json(s);
+}
+catch(err){
+    console.error(err);
+    res.status(500).json(err);
+  }
+}
 
 module.exports = {
-  novaPrijava
+  novaPrijava,
+  aktivnePrijave
 };
