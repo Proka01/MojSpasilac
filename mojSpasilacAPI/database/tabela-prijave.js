@@ -6,7 +6,7 @@ const prijave = {
     let conn;
     try {
       conn = await pool.getConnection();
-      const res = await conn.query("INSERT INTO "+tabela+" (id_korisnika,vreme,lokacija_prijave_x, lokacija_prijave_y) VALUES (?,?,?,?)", [prijava.id_korisnika,new Date(),prijava.lokacija_prijave]);
+      const res = await conn.query("INSERT INTO "+tabela+" (id_korisnika,vreme,lokacija_prijave_x, lokacija_prijave_y) VALUES (?,?,?,?)", [prijava.id_korisnika,new Date(),prijava.lokacija_prijave_x,prijava.lokacija_prijave_y]);
       console.log(res); 
       if(res.affectedRows==0)
         throw new Error('Nije uspelo upisivanje u bazu');
