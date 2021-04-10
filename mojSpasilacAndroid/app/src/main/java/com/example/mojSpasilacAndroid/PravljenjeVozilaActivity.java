@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,8 +37,8 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
 
     private EditText brojMesta;
     private Button prijaviVozilo;
-    private double lokacijaVozilaX;
-    private double lokacijaVozilaY;
+    private float lokacijaVozilaX;
+    private float lokacijaVozilaY;
 
     public SharedPreferences sharedPreferences;
     SharedPreferences.Editor sharedPreferencesEditor;
@@ -85,12 +86,17 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
 
                 if (locationTrack.canGetLocation()) {
 
-                    lokacijaVozilaX = locationTrack.getLatitude();
-                    lokacijaVozilaY = locationTrack.getLongitude();
+                    lokacijaVozilaX = (float) locationTrack.getLatitude();
+                    lokacijaVozilaY = (float) locationTrack.getLongitude();
 
                     String ispis = String.valueOf(lokacijaVozilaY) + " " + String.valueOf(lokacijaVozilaX);
                     ///textView.setText(ispis);
                     Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(lokacijaVozilaY) + "\nLatitude:" + Double.toString(lokacijaVozilaX), Toast.LENGTH_SHORT).show();
+                    posaljiVozilo();
+
+                    startActivity(new Intent(PravljenjeVozilaActivity.this, PutanjaVozilaActivity.class));
+                    finish();
+
                 } else {
 
                     locationTrack.showSettingsAlert();
@@ -106,6 +112,7 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
 
     }
     ////////////////////////////////////////////////////KRAJ DOBIJANJA LOKACIJE
+
 
     //////////////////////////////////////////////////////////////
     private ArrayList findUnAskedPermissions(ArrayList wanted) {
@@ -202,6 +209,8 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
             bodyJSON.put("kapacitet", Integer.parseInt(brojMesta.getText().toString()));
             bodyJSON.put("lokacija_vozila_x", lokacijaVozilaX);
             bodyJSON.put("lokacija_vozila_y", lokacijaVozilaY);
+            //sharedPreferencesEditor.putFloat("lokacija_vozila_x",lokacijaVozilaX);///01:30am
+           // sharedPreferencesEditor.putFloat("lokacija_vozila_y",lokacijaVozilaY);
             bodySE = new StringEntity(bodyJSON.toString());
         } catch (UnsupportedEncodingException | JSONException e) {
             e.printStackTrace();
@@ -219,7 +228,6 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 Toast.makeText(PravljenjeVozilaActivity.this, "Greska!!! "+statusCode, Toast.LENGTH_SHORT).show();
-
             }
 
         });

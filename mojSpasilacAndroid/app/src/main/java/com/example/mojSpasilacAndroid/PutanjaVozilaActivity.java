@@ -4,9 +4,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -23,13 +25,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class PutanjaVozilaActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private double lokacijaX;
-    private double lokacijaY;
+    private float lokacijaX;
+    private float lokacijaY;
 
     private double mojaLokacijaX;
     private double mojaLokacijaY;
 
     private int brojOsoba;
+
+    public SharedPreferences sharedPreferences;
+    SharedPreferences.Editor sharedPreferencesEditor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,9 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+
     }
 
     /**
@@ -68,13 +76,22 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
         /**/
         //mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(sredinaLat,sredinaLng),rastojanje));
 
-
+        crtaj(mMap);
     }
     private void crtaj(GoogleMap map)
     {
         //GET LOKACIJA
+        /*sharedPreferences = getApplicationContext().getSharedPreferences("KorisniciDB", MODE_PRIVATE);
+        sharedPreferencesEditor = sharedPreferences.edit();
+        mojaLokacijaX=sharedPreferences.getFloat("lokacija_vozila_x",15);
+        mojaLokacijaY=sharedPreferences.getFloat("lokacija_vozila_y",0);*/
+
+        Toast.makeText(PutanjaVozilaActivity.this, mojaLokacijaX+" "+mojaLokacijaY, Toast.LENGTH_SHORT).show();
+
+
         LatLng mojaLokacija = new LatLng(mojaLokacijaX,mojaLokacijaY);
         LatLng lokacijaCilj = new LatLng(lokacijaX,lokacijaY);
+
         if(brojOsoba==1) {
             mMap.addMarker(new MarkerOptions()
                     .position(lokacijaCilj));
