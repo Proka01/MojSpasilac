@@ -77,13 +77,13 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
         LatLng lokacijaCilj = new LatLng(lokacijaX,lokacijaY);
         if(brojOsoba==1) {
             mMap.addMarker(new MarkerOptions()
-                    .position(lokacijaCilj)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.person)));
+                    .position(lokacijaCilj));
+                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.person)));
         }
         else{
             mMap.addMarker(new MarkerOptions()
-                    .position(lokacijaCilj)
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.persons)));
+                    .position(lokacijaCilj));
+                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.persons)));
         }
         mMap.addMarker(new MarkerOptions()
                 .position(mojaLokacija)
