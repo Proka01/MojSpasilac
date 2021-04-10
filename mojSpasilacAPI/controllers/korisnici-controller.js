@@ -6,7 +6,7 @@ const saltRounds = 10;
 
 async function prikazi(req, res) {
   try{
-    const s = await korisnici.select();
+    const s =await korisnici.select();
     res.status(200).json(s);
   }
   catch(err){
