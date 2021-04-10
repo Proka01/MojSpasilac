@@ -10,23 +10,39 @@ import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 
-public class GlavniActivity extends AppCompatActivity{
+public class GlavniActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
 
 
 
@@ -35,6 +51,19 @@ public class GlavniActivity extends AppCompatActivity{
     private ArrayList permissions = new ArrayList();
     Button btn;
     TextView textView;
+    EditText brojgodina;
+    Spinner spinner;
+    Button dodaj_sledecu;
+    Button potvrdi;
+    TextView tv_broj_osoba;
+    String[] stanja={"zdrav","bolestan"};
+    private int broj_dodatih_osoba;
+    private int br_godina;
+    private String zdravstveno_stanje;
+    private ArrayList<Osoba> osobe = new ArrayList<>();
+    private String pomocni = "";
+    double latitude;
+    double longitude;
 
     private final static int ALL_PERMISSIONS_RESULT = 101;
     LocationTrack locationTrack;
@@ -46,6 +75,65 @@ public class GlavniActivity extends AppCompatActivity{
 
         btn = (Button) findViewById(R.id.btn);
         textView = (TextView) findViewById(R.id.lokacija);
+        dodaj_sledecu = (Button) findViewById(R.id.btn_sledeca_osoba);
+        potvrdi = (Button) findViewById(R.id.btn_potvrda);
+        brojgodina = (EditText) findViewById(R.id.editText_broj_godina);
+        tv_broj_osoba = (TextView) findViewById(R.id.tv_broj_osoba);
+        spinner = (Spinner) findViewById(R.id.spinner);
+        spinner.setOnItemSelectedListener(this);
+        broj_dodatih_osoba = 0;
+        zdravstveno_stanje = stanja[0];
+        String pom = brojgodina.getText().toString();
+        br_godina = Integer.parseInt(pom);
+        latitude = -1;
+        longitude = -1;
+
+        ArrayAdapter aa = new ArrayAdapter(this,android.R.layout.simple_spinner_item,stanja);  //simple_spinner_item
+        aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//Setting the ArrayAdapter data on the Spinner
+        spinner.setAdapter(aa);
+
+        /////////////////////////////////CITANJE PRIJAVE/////////////////////////////////////////////////////////////////////////////////
+
+        dodaj_sledecu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Osoba osoba;
+                br_godina = Integer.valueOf(String.valueOf(brojgodina.getText()));
+                if(zdravstveno_stanje == stanja[0]) osoba = new Osoba(br_godina,1);  //zdrav
+                else osoba = new Osoba(br_godina,2);
+
+                osobe.add(osoba);
+                broj_dodatih_osoba++;
+                tv_broj_osoba.setText(String.valueOf(broj_dodatih_osoba));
+            }
+        });
+
+        ////////////////////////////////////////KRAJ CITANJA PRIJAVE///////////////////////////////////////////////////////////////////////
+
+        /////////////////////////////////////////////POTVRDI///////////////////////////////////////////////////////////////
+        potvrdi.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {         //TODO TESTIRATI OVO SRANJE
+                /*for(Osoba o : osobe)
+                {
+                    pomocni+= String.valueOf(o.getZdravstvenoStanje()) + "-"+String.valueOf(o.getBrGodina())+" ; ";
+                }*/
+
+                if(osobe.size()!=0 && latitude!= -1 && longitude!= -1)
+                {
+                    validate(osobe,latitude,longitude);
+                    Toast.makeText(GlavniActivity.this, "Prijava poslata", Toast.LENGTH_LONG).show();
+                }
+
+                String ispis = formatString(osobe);
+                tv_broj_osoba.setText(ispis);
+                /*Toast.makeText(GlavniActivity.this, pomocni, Toast.LENGTH_LONG).show();
+                */
+            }
+        });
+
+        /////////////////////////////////////////////////////////ZA GPS LOKACIJU//////////////////////////////////////////////
 
         permissions.add(ACCESS_FINE_LOCATION);
         permissions.add(ACCESS_COARSE_LOCATION);
@@ -64,7 +152,7 @@ public class GlavniActivity extends AppCompatActivity{
 
 
 
-
+//////////////////////////////////////////////DOBIJANJE LOKACIJE PRITISKOM NA DUGME////////////////////////////////////////////////////
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,9 +163,8 @@ public class GlavniActivity extends AppCompatActivity{
 
                 if (locationTrack.canGetLocation()) {
 
-
-                    double longitude = locationTrack.getLongitude();
-                    double latitude = locationTrack.getLatitude();
+                    latitude = locationTrack.getLatitude();
+                    longitude = locationTrack.getLongitude();
 
                     String ispis = String.valueOf(longitude) + " " + String.valueOf(latitude);
                     textView.setText(ispis);
@@ -91,7 +178,12 @@ public class GlavniActivity extends AppCompatActivity{
         });
 
     }
+///////////////////////////////////////////KRAJ DOBIJANJA LOKACIJE/////////////////////////////////////////////////////////////////////
 
+
+    ////////////////////////////////////////REGULISANJE GPS-A///////////////////////////////////////////////////////
+    ///NPR ako je isklucen, ako ne radi, da se otvori i da se ukljuci gps itd //////////////////////////////////////
+    ////////////////Sve ispod je zaduzeno za to/////////////////////////////////////////////////////////////////////
 
     private ArrayList findUnAskedPermissions(ArrayList wanted) {
         ArrayList result = new ArrayList();
@@ -171,6 +263,95 @@ public class GlavniActivity extends AppCompatActivity{
         super.onDestroy();
         locationTrack.stopListener();
     }
+    //////////////////////////////////////////////KRAJ GPSA////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        Toast.makeText(getApplicationContext(), stanja[position], Toast.LENGTH_LONG).show();
+        zdravstveno_stanje = stanja[position];
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
+
+    }
+
+    ///////////////////////////////////////POST ZAHTEV METODA/////////////////////////////////////////////
+
+    private void validate(ArrayList<Osoba> osobe,double latitude,double longtitude)
+    {
+        AsyncHttpClient client = new AsyncHttpClient();
+        JSONObject bodyJSON=new JSONObject();
+        StringEntity bodySE = null;
+
+
+        try {
+            bodyJSON.put("lokacija_prijave_x", latitude);
+            bodyJSON.put("lokacija_prijave_y", longtitude);
+            String formatiran = formatString(osobe);
+            bodyJSON.put("osobe",formatiran);
+            bodySE = new StringEntity(bodyJSON.toString());
+
+
+        } catch (UnsupportedEncodingException | JSONException e) {
+            e.printStackTrace();
+        }
+        client.post(null, "https://mojspasilac.asprogram.com/api/korisnici/login", bodySE, "application/json", new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                // called when response HTTP status is "200 OK"
+
+
+
+
+                //startActivity(new Intent(LoginActivity.this, GlavniActivity.class));
+                //finish();
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                if(statusCode == 0)
+                    Toast.makeText(GlavniActivity.this, "Neuspešno logovanje. Proverite konekciju sa internetom", Toast.LENGTH_SHORT).show();
+                else if(statusCode == 403)
+                    Toast.makeText(GlavniActivity.this, "Neuspešno logovanje. Korisničko ime ili lozinka nisu ispravni", Toast.LENGTH_SHORT).show();
+                else
+                    Toast.makeText(GlavniActivity.this, "Neuspešno logovanje", Toast.LENGTH_SHORT).show();
+
+                Log.i("ws", "---->>onFailure : " + statusCode);
+            }
+
+        });
+
+    }
+
+    //////////////////////////////////////////////KRAJ POST-A/////////////////////////////////////////////
+
+    //////////////////////////////////////////////METODA FORMAT STRING ZA JSON////////////////////////////
+    String formatString(ArrayList<Osoba> osobe)   // [{"broj_godina":20,"id_zdravstvenog_stanja":1}]
+    {
+        int br = 1;
+        int n = osobe.size();
+        String ret = "[";
+        for(Osoba o : osobe)
+        {
+            String pom = "{\"broj_godina\":";
+            pom+=String.valueOf(o.getBrGodina());
+            pom+=",";
+            pom+="\"id_zdravstvenog_stanja\":";
+            pom+=String.valueOf(o.getZdravstvenoStanje());
+            pom+="}";
+
+            ret+=pom;
+            if(br != n) ret+=",";
+            br++;
+        }
+        ret+="]";
+        return ret;
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
 }
