@@ -13,7 +13,7 @@ async function prikazi(req, res) {
     console.error(err);
     res.status(500).json(err);
   }
-}
+} 
 
 async function prikaziJedan(req, res) {
   try{
