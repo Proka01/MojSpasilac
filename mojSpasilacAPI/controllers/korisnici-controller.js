@@ -29,15 +29,22 @@ async function prikaziJedan(req, res) {
 
 async function signUp(req,res){
 
+  const id_tipa_korisnika=req.body.id_tipa_korisnika;
+  if(id_tipa_korisnika!=2 && id_tipa_korisnika!=3)
+  {
+    res.status(403).json({message:"Nedozvoljen tip korisnika"}).end();
+    return;
+  }
+
   try{
     const hash = await bcrypt.hash(req.body.password, saltRounds);
-    const r = await korisnici.insert(req.body.username, hash);
+    const r = await korisnici.insert(req.body.username, hash,id_tipa_korisnika);
     //console.log(r);
     res.status(200).json(r);
   } catch(err){
     console.error(err);
     if(err.message=='Korisnik sa unetim imenom već postoji')
-      res.status(403).json(err);
+      res.status(403).json({message:err.message});
     else
       res.status(500).json(err);
   }
@@ -54,7 +61,7 @@ async function logIn(req,res){
     if(!match)
       return res.status(403).json({err:'Pogrešna lozinka'});
 
-    const token=await generisiToken(k.id_korisnika,k.verifikovan);
+    const token=await generisiToken(k.id_korisnika,k.id_tipa_korisnika);
     res.status(200).json({token:token});
   } catch(err){
     console.error(err);

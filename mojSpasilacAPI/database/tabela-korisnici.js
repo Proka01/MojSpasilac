@@ -37,7 +37,7 @@ const korisnici={
       throw err;
     }
   },
-  insert: async function(username,password){
+  insert: async function(username,password,id_tipa_korisnika){
     let conn;
     try {
       conn = await pool.getConnection();
@@ -45,7 +45,7 @@ const korisnici={
       //console.log(c[0].cnt)
       if(c[0].cnt>0)
         throw new Error('Korisnik sa unetim imenom već postoji');
-      const res = await conn.query("INSERT INTO "+tabela+" (username,password,id_tipa_korisnika) VALUES (?,?,?)", [username,password,1]);
+      const res = await conn.query("INSERT INTO "+tabela+" (username,password,id_tipa_korisnika) VALUES (?,?,?)", [username,password,id_tipa_korisnika]);
       //console.log(res); 
       if(res.affectedRows==0)
         throw new Error('Nije uspelo upisivanje u bazu');

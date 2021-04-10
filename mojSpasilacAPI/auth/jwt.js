@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 
-const generisiToken = async (id_korisnika,verifikovan) => {
-  return await jwt.sign({id_korisnika:id_korisnika,verifikovan:verifikovan}, process.env.TOKEN_SECRET);
+const generisiToken = async (id_korisnika,id_tipa_korisnika) => {
+  return await jwt.sign({id_korisnika:id_korisnika,id_tipa_korisnika:id_tipa_korisnika}, process.env.TOKEN_SECRET);
 };
 
 const proveriToken = async function (token){
@@ -32,7 +32,7 @@ const auth = async function(req,res,next){
     next();
   }catch(err){
     console.error(err);
-    res.status(403).json(err);
+    res.status(403).json({message:"Neuspesna autentifikacija"});
   }
 }
 
