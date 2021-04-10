@@ -33,14 +33,16 @@ export default {
 </script>
 
 <style>
-html,
-body {
-  margin: 0;
-  padding: 0;
-}
 
 .map {
-  width: 500px;
-  height: 500px;
+  width: 60%;
+  height: 100%;
 }
+.vue-map-container{
+  
+  width: 100%;
+  height: 80vh;
+  max-height: 100%;
+}
+
 </style>

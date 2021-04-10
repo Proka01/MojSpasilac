@@ -6,3 +6,13 @@ export function login(username, password){
   params.append('password', password );
   return axios.post('/korisnici/login', params)
 }
+
+export function getPrijave(){
+  console.log(localStorage.getItem('token'))
+  return axios.get('/prijave',{headers: {'Authorization': "Bearer "+ localStorage.getItem('token')}});
+}
+
+export function getVozila(){
+  console.log(localStorage.getItem('token'))
+  return axios.get('/vozila',{headers: {'Authorization': "Bearer "+ localStorage.getItem('token')}});
+}
