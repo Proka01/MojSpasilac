@@ -4,6 +4,7 @@ public class Korisnik {
     private String Username;
     private String Userpassword;
 
+
     Korisnik(String username, String userpassword){
         this.Username = username;
         this.Userpassword = userpassword;
