@@ -4,7 +4,7 @@
         :center="center"
         :zoom="14"
     >
-        <GmapMarker v-for="prijava in prijave" :key="prijava.id_prijave"
+        <GmapMarker v-for="prijava in prijave" :key="'prijava'+prijava.id_prijave"
             :position="{lat: prijava.lokacija_prijave_x, lng:prijava.lokacija_prijave_y}"
             label="prijava"
             color="blue"
@@ -56,7 +56,7 @@ export default {
 .vue-map-container{
   
   width: 100%;
-  height: 80vh;
+  height: 70vh;
   max-height: 100%;
 }
 

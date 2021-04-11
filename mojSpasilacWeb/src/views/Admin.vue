@@ -5,20 +5,25 @@
           <img src="@/assets/logo.png" alt="logo" width="60" height="60" >
       </div>
       <h1> mojSpasilac Admin panel</h1>
+      <div style="margin-left:300px">
+        <b-form-select class="selekt" v-model="izbabranaPrijava" :options="prijaveOptions"></b-form-select>
+        <b-form-select class="selekt" v-model="izbabranoVozilo" :options="vozilaOptions"></b-form-select>
+
+      </div>
     </nav>
     <div class="admin-content">
       <div id="prijave">
         <h1>Lista prijava</h1>
-        <div v-for="prijava in prijave" :key="prijava.cekanje" style="border: 1px solid black">
+        <div v-for="prijava in prijave" :key="prijava.id_prijave*100000+prijava.cekanje" :class="{zauzeto : prijava.dodeljena}" style="border: 1px solid black">
           <p>prijava {{prijava.id_prijave}}</p>
           <p>{{formatirajVreme(prijava.cekanje)}}</p>
         </div>
         {{prijave}}
       </div>
-      <Map id="map" v-bind:prijave="prijave" v-bind:vozila="vozila" />
+        <Map id='map'  v-bind:prijave="prijave" v-bind:vozila="vozila" />
       <div id="vozila">
         <h1>Lista vozila</h1>
-        <div v-for="vozilo in vozila" :key="vozilo.id_vozila" style="border: 1px solid black">
+        <div v-for="vozilo in vozila" :key="vozilo.id_vozila" :class="{zauzeto : vozilo.prijava!=null}" style="border: 1px solid black">
           <p>{{vozilo.username}}</p>
           <p>{{vozilo.kapacitet}}</p>
         </div>
@@ -41,7 +46,10 @@ export default {
   data:()=>{
     return{
       prijave:[],
-      vozila:[]
+      vozila:[],
+      vozilaOptions:[],
+      prijaveOptions:[],
+      izbabranoVozilo:undefined
     }
   },
   computed:{
@@ -63,10 +71,15 @@ export default {
     },
     obradiPrijave(){
       console.log("POZVAO");
+      this.prijaveOptions=[];
       for(var prijava of this.prijave){
         var razlika=new Date()-new Date(prijava.vreme)
         razlika=parseInt(razlika/1000);
         prijava.cekanje=razlika;
+        if(prijava.dodeljena==undefined)
+          prijava.dodeljena=false;
+        if(prijava.dodeljena==false)
+          this.prijaveOptions.push({value:prijava.id_prijave,text:"prijava"+prijava.id_prijave})
       }
     },
     obradiPrijave2(){
@@ -76,7 +89,32 @@ export default {
         prijava.cekanje++;
       }
     },
-
+    obradiVozila(){
+      this.vozilaOptions=[];
+      for(var vozilo of this.vozila){
+        if(vozilo.prijava!=null)
+        {
+          for(var prijava of this.prijave){
+            if(prijava.id_prijave==vozilo.prijava.id_prijave)
+              prijava.dodeljena=true;
+          }
+          /*
+          console.log(vozilo.prijava.id_prijave);
+          console.log(this.prijave.find( prijava => prijava.id_prijave==vozilo.prijava.id_prijave ))
+          var p=this.prijave.find( prijava => prijava.id_prijave==vozilo.prijava.id_prijave );
+          (this.prijave.find( prijava => prijava.id_prijave==vozilo.prijava.id_prijave )).dodeljena=true;
+          console.log(p);
+          if(p!=undefined)
+          {
+            console.log("USO");
+            p.dodeljena=true;
+          }*/
+        }
+        else{
+          this.vozilaOptions.push({value:vozilo.id_vozila,text:vozilo.username+" "+vozilo.kapacitet})
+        }
+      }
+    },
     ucitajPrijave(){
       console.log("UcitajPrijave");
       var self=this;
@@ -97,6 +135,7 @@ export default {
       getVozila().then(function (response) {
             console.log("Vozila",response.data);
             self.vozila=response.data;
+            self.obradiVozila();
           }).catch(function (error) {
             console.log("ERROR");
             console.log(error); 
@@ -105,6 +144,10 @@ export default {
             console.log(self.poruka);
           });
     },
+    referesh(){
+      this.ucitajPrijave();
+      this.ucitajVozila();  
+    }
   },
   mounted(){
     console.log("USO");
@@ -138,11 +181,23 @@ nav h1{
   max-width: 300px;
 }
 #map{
+  display: flex;
+  flex-direction: column;
   flex-grow:2;
 }
 #vozila{
   flex-grow:1;
   max-width: 300px;
+}
+
+.zauzeto{
+  background-color:lightseagreen;
+}
+
+.selekt{
+  width:200px;
+  height:50px;
+  margin-left: 20px;
 }
 
 </style>
