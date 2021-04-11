@@ -20,6 +20,18 @@ const vozila = {
       throw err;
     }
   },
+  svaVozila2: async function(){
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      const res = await conn.query("SELECT vozila.*, username from "+tabela+" JOIN korisnici USING(id_korisnika)");
+      //const recepti=res[0];
+      conn.end();
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  },
   svaVozila: async function() {
     let conn;
     try {
