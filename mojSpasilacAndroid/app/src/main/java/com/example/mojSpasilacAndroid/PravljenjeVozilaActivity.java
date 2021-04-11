@@ -229,7 +229,6 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
                     Toast.makeText(PravljenjeVozilaActivity.this, "Vozilo uspesno prijavljeno!", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(PravljenjeVozilaActivity.this, PutanjaVozilaActivity.class);
-                    intent.putExtra("kapacitet", kapacitet);
                     startActivity(intent);
                     finish();
                 }

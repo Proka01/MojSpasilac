@@ -90,7 +90,7 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
         mapFragment.getMapAsync(this);
 
         spasen = findViewById(R.id.button);
-        if(!postojiPrijava)spasen.setEnabled(false);
+        if (!postojiPrijava) spasen.setEnabled(false);
         spasen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,18 +99,18 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
         });
 
     }
-    private void sendIdPrijave()
-    {
-        AsyncHttpClient client = new AsyncHttpClient(true,80,443);
-        JSONObject bodyJSON=new JSONObject();
+
+    private void sendIdPrijave() {
+        AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
+        JSONObject bodyJSON = new JSONObject();
         StringEntity bodySE = null;
         client.setAuthenticationPreemptive(true);
         SharedPreferences sharedPreferences;
         sharedPreferences = getApplicationContext().getSharedPreferences("KorisniciDB", MODE_PRIVATE);
-        String token= sharedPreferences.getString("Token", "");
+        String token = sharedPreferences.getString("Token", "");
         client.addHeader("Authorization", "Bearer " + token);
         try {
-            bodyJSON.put("id_prijave",id_prijave);
+            bodyJSON.put("id_prijave", id_prijave);
             bodySE = new StringEntity(bodyJSON.toString());
         } catch (UnsupportedEncodingException | JSONException e) {
             e.printStackTrace();
@@ -119,14 +119,15 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 // called when response HTTP status is "200 OK"
-                Toast.makeText(getApplicationContext(), "Spasen "+id_prijave, Toast.LENGTH_SHORT).show();
-                postojiPrijava=false;
+               // Toast.makeText(getApplicationContext(), "Spasen " + id_prijave, Toast.LENGTH_SHORT).show();
+                postojiPrijava = false;
                 spasen.setEnabled(false);
             }
+
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
-                Toast.makeText(getApplicationContext(), "Nije Spasen!!!!! "+statusCode, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(getApplicationContext(), "Nije Spasen!!!!! " + statusCode, Toast.LENGTH_SHORT).show();
                 Log.i("ws", "---->>onFailure : " + statusCode);
             }
 
@@ -142,8 +143,7 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
-    private void getMojaLokacija()
-    {
+    private void getMojaLokacija() {
         locationTrack = new LocationTrack(PutanjaVozilaActivity.this);
         if (locationTrack.canGetLocation()) {
 
@@ -156,19 +156,19 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
             locationTrack.showSettingsAlert();
         }
     }
-    private void sendMyLocation()
-    {
-        AsyncHttpClient client = new AsyncHttpClient(true,80,443);
-        JSONObject bodyJSON=new JSONObject();
+
+    private void sendMyLocation() {
+        AsyncHttpClient client = new AsyncHttpClient(true, 80, 443);
+        JSONObject bodyJSON = new JSONObject();
         StringEntity bodySE = null;
         client.setAuthenticationPreemptive(true);
         SharedPreferences sharedPreferences;
         sharedPreferences = getApplicationContext().getSharedPreferences("KorisniciDB", MODE_PRIVATE);
-        String token= sharedPreferences.getString("Token", "");
+        String token = sharedPreferences.getString("Token", "");
         client.addHeader("Authorization", "Bearer " + token);
         try {
-            bodyJSON.put("lokacija_vozila_x",mojaLokacijaX);
-            bodyJSON.put("lokacija_vozila_y",mojaLokacijaY);
+            bodyJSON.put("lokacija_vozila_x", mojaLokacijaX);
+            bodyJSON.put("lokacija_vozila_y", mojaLokacijaY);
             bodySE = new StringEntity(bodyJSON.toString());
         } catch (UnsupportedEncodingException | JSONException e) {
             e.printStackTrace();
@@ -178,7 +178,7 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 // called when response HTTP status is "200 OK"
 
-                Toast.makeText(getApplicationContext(), "SVE OK!!!!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "SVE OK!!!!", Toast.LENGTH_SHORT).show();
 
 
             }
@@ -193,17 +193,28 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
         });
     }
 
-    private void drawMyLocation()
-    {
-        LatLng mojaLokacija = new LatLng(mojaLokacijaX,mojaLokacijaY);
+    private void drawMyLocation() {
+        LatLng mojaLokacija = new LatLng(mojaLokacijaX, mojaLokacijaY);
         mMap.clear();
-        if(postojiPrijava)crtaj(mMap);
-        mojMarker = mMap.addMarker(new MarkerOptions()
+        if (postojiPrijava) crtaj(mMap);
+        /*mojMarker = mMap.addMarker(new MarkerOptions()
                 .position(mojaLokacija)
-                .title("Moja Lokacija"));
+                .title("Moja Lokacija"));*/
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
+        //mMap.getUiSettings().setMyLocationButtonEnabled(true);
         /*mojMarker=mMap.addMarker(new MarkerOptions()
                 .position(mojaLokacija)
-                .icon(BitmapDescriptorFactory.fromResource(R.drawable.persons)));*/
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.person)));*/
     }
 
     @Override
@@ -332,7 +343,7 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
         //Toast.makeText(PutanjaVozilaActivity.this, lokacijaX+" "+lokacijaY, Toast.LENGTH_SHORT).show();
 
         //TODO
-        int brojOsoba = getIntent().getIntExtra("kapacitet", 1);
+        int brojOsoba = 1;//getIntent().getIntExtra("kapacitet", 1);
         if(brojOsoba ==2) {
             mMap.addMarker(new MarkerOptions()
                     .position(lokacijaCilj)

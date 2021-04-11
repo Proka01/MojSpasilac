@@ -13,7 +13,6 @@
         <GmapMarker v-for="vozilo in vozila" :key="'vozilo'+vozilo.id_vozila"
             :position="{lat: vozilo.lokacija_vozila_x, lng:vozilo.lokacija_vozila_y}"
             label="vozilo"
-            icon="https://www.flaticon.com/svg/vstatic/svg/747/747376.svg?token=exp=1618138556~hmac=00b5799562f6572db8dc75d03677a3c0"
         />
     </GmapMap>
   </div>
