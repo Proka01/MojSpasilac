@@ -51,6 +51,7 @@ public class GlavniActivity extends AppCompatActivity implements AdapterView.OnI
     private ArrayList permissionsRejected = new ArrayList();
     private ArrayList permissions = new ArrayList();
     Button btn;
+    Button btn_hitno;
     TextView textView;
     EditText brojgodina;
     Spinner spinner;
@@ -75,6 +76,7 @@ public class GlavniActivity extends AppCompatActivity implements AdapterView.OnI
         setContentView(R.layout.activity_glavni);
 
         btn = (Button) findViewById(R.id.btn);
+        btn_hitno = (Button) findViewById(R.id.hitno);
         textView = (TextView) findViewById(R.id.lokacija);
         dodaj_sledecu = (Button) findViewById(R.id.btn_sledeca_osoba);
         potvrdi = (Button) findViewById(R.id.btn_potvrda);
@@ -132,6 +134,24 @@ public class GlavniActivity extends AppCompatActivity implements AdapterView.OnI
                 //tv_broj_osoba.setText(ispis);
                 /*Toast.makeText(GlavniActivity.this, pomocni, Toast.LENGTH_LONG).show();
                 */
+            }
+        });
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        ////////////////////////////////////////////HITNA PRIJAVA/////////////////////////////////////////////////////////////
+
+        btn_hitno.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GlavniActivity.this, HitanAktiviti.class);
+                if(longitude != -1 && latitude != -1)
+                {
+                    intent.putExtra("longitude", longitude);
+                    intent.putExtra("latitude",latitude);
+                    startActivity(intent);
+                    finish();
+                }
+                else Toast.makeText(GlavniActivity.this, "Učitajte lokaciju pritiskom na dugme", Toast.LENGTH_LONG).show();
+
             }
         });
 
