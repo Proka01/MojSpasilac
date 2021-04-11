@@ -125,11 +125,11 @@ public class GlavniActivity extends AppCompatActivity implements AdapterView.OnI
                 if(osobe.size()!=0 && latitude!= -1 && longitude!= -1)
                 {
                     validate(osobe,latitude,longitude);
-                    Toast.makeText(GlavniActivity.this, "Prijava poslata", Toast.LENGTH_LONG).show();
+                    Toast.makeText(GlavniActivity.this, "Vaša prijava je poslata", Toast.LENGTH_LONG).show();
                 }
 
-                String ispis = formatString(osobe);
-                tv_broj_osoba.setText(ispis);
+                //String ispis = formatString(osobe);
+                //tv_broj_osoba.setText(ispis);
                 /*Toast.makeText(GlavniActivity.this, pomocni, Toast.LENGTH_LONG).show();
                 */
             }
