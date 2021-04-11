@@ -190,7 +190,7 @@ public class GlavniActivity extends AppCompatActivity implements AdapterView.OnI
 
                     String ispis = String.valueOf(longitude) + " " + String.valueOf(latitude);
                     textView.setText(ispis);
-                    Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(longitude) + "\nLatitude:" + Double.toString(latitude), Toast.LENGTH_SHORT).show();
                 } else {
 
                     locationTrack.showSettingsAlert();
@@ -292,7 +292,7 @@ public class GlavniActivity extends AppCompatActivity implements AdapterView.OnI
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        Toast.makeText(getApplicationContext(), stanja[position], Toast.LENGTH_LONG).show();
+       // Toast.makeText(getApplicationContext(), stanja[position], Toast.LENGTH_LONG).show();
         zdravstveno_stanje = stanja[position];
     }
 
