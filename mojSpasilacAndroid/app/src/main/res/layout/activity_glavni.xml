@@ -1,81 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".GlavniActivity">
 
-    <TextView
-        android:id="@+id/lokacija"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.773"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.051" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:text="Lokacija"
-        app:layout_constraintEnd_toStartOf="@+id/lokacija"
-        app:layout_constraintHorizontal_bias="0.184"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50px"
+            android:orientation="horizontal"
+            android:layout_weight=".14">
 
-    <TextView
-        android:id="@+id/tv_unesi_broj_godina"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="96dp"
-        android:text="Unesite broj godina:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:layout_width="30px"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight=".4"
+                android:background="#f7fafa">
 
-    <EditText
-        android:id="@+id/editText_broj_godina"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="10"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.19" />
+                <Button
+                    android:id="@+id/btn"
+                    android:layout_width="350px"
+                    android:layout_height="150px"
+                    android:layout_marginTop="80px"
+                    android:layout_marginLeft="20px"
+                    android:backgroundTint="@color/teal_200"
+                    android:text="Lokacija"/>
 
-    <TextView
-        android:id="@+id/tv_zdravstveno_stanje"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="208dp"
-        android:text="Izaberite zdravstveno stanje:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.461"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            </LinearLayout>
 
-    <TextView
-        android:id="@+id/tv_br_osoba"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="356dp"
-        android:text="Broj unetih osoba:"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.053"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+            <LinearLayout
+                android:layout_width="70px"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:layout_weight=".6"
+                android:background="#f7fafa">
+
+                <TextView
+                    android:id="@+id/lokacija"
+                    android:layout_width="match_parent"
+                    android:layout_height="70px"
+                    android:layout_marginTop="110px"
+                    android:text="Pritisnite dugme lokazija"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40px"
+            android:background="#f7fafa"
+            android:orientation="vertical"
+            android:layout_weight=".24">
+
+            <TextView
+                android:id="@+id/tv_unesi_broj_godina"
+                android:layout_width="match_parent"
+                android:layout_height="100px"
+                android:layout_marginTop="80px"
+                android:textSize="70px"
+                android:textStyle="bold|italic"
+                android:text="   Unesite broj godina:"/>
+
+            <EditText
+                android:id="@+id/editText_broj_godina"
+                android:layout_width="1000px"
+                android:layout_height="130px"
+                android:layout_marginLeft="30px"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:layout_marginTop="70px"
+                android:text="10"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40px"
+            android:background="#f7fafa"
+            android:orientation="vertical"
+            android:layout_weight=".24">
+
+            <TextView
+                android:id="@+id/tv_zdravstveno_stanje"
+                android:layout_width="match_parent"
+                android:layout_height="100px"
+                android:layout_marginTop="80px"
+                android:textSize="70px"
+                android:textStyle="bold|italic"
+                android:text="   Izaberite zdravstveno stanje:" />
+
+            <Spinner
+                android:id="@+id/spinner"
+                android:layout_width="1000px"
+                android:layout_height="100px"
+                android:layout_marginTop="70px"
+                android:layout_marginLeft="30px"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="40px"
+            android:orientation="horizontal"
+            android:layout_weight=".24">
+
+            <LinearLayout
+                android:layout_width="5px"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_weight=".5">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="10px"
+                    android:orientation="horizontal"
+                    android:layout_weight=".5"
+                    android:background="#f7fafa">
+
+                    <TextView
+                        android:id="@+id/tv_br_osoba"
+                        android:layout_width="match_parent"
+                        android:layout_height="70px"
+                        android:layout_marginTop="70px"
+                        android:textSize="50px"
+                        android:textStyle="bold|italic"
+                        android:text="   Broj unetih osoba:" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="10px"
+                    android:orientation="horizontal"
+                    android:layout_weight=".5"
+                    android:background="#f7fafa">
+
+                    <TextView
+                        android:id="@+id/tv_broj_osoba"
+                        android:layout_width="match_parent"
+                        android:layout_height="80px"
+                        android:layout_marginTop="10px"
+                        android:textSize="70px"
+                        android:textStyle="bold"
+                        android:text="   0" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="5px"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="#f7fafa"
+                android:layout_weight=".5">
+
+                <Button
+                    android:id="@+id/btn_sledeca_osoba"
+                    android:layout_width="500px"
+                    android:layout_height="200px"
+                    android:layout_marginLeft="20px"
+                    android:layout_marginTop="90px"
+                    android:backgroundTint="@color/teal_200"
+                    android:text="Sledeća osoba" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50px"
+            android:background="#00b0ff"
+            android:orientation="horizontal"
+            android:layout_weight=".14">
+
+            <Button
+                android:id="@+id/btn_potvrda"
+                android:layout_width="900px"
+                android:layout_height="200px"
+                android:layout_marginTop="40px"
+                android:layout_marginLeft="80px"
+                android:backgroundTint="@color/teal_200"
+                android:text="Potvrdi" />
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+
+
+
+     <!--ORIGINALNI XML
 
     <Button
         android:id="@+id/btn_sledeca_osoba"
@@ -88,36 +213,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
-        android:id="@+id/btn_potvrda"
-        android:layout_width="238dp"
-        android:layout_height="54dp"
-        android:text="Potvrdi"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.954" />
 
-    <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="56dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.304"
-        tools:layout_editor_absoluteX="0dp" />
 
-    <TextView
-        android:id="@+id/tv_broj_osoba"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="44dp"
-        android:text="0"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_br_osoba"
-        app:layout_constraintVertical_bias="0.151" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        KRAJ ORIGINALNOG XML-A -->
+</RelativeLayout>

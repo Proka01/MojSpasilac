@@ -10,6 +10,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Build;
@@ -74,6 +76,7 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
     private final static int ALL_PERMISSIONS_RESULT = 101;
     LocationTrack locationTrack;
 
+    Button spasen;
     Marker mojMarker;
 
 
@@ -86,7 +89,8 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        Button spasen = findViewById(R.id.button);
+        spasen = findViewById(R.id.button);
+        if(!postojiPrijava)spasen.setEnabled(false);
         spasen.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,15 +115,18 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
         } catch (UnsupportedEncodingException | JSONException e) {
             e.printStackTrace();
         }
-        client.post(null, "https://mojspasilac.asprogram.com/api/prijave/spasen", bodySE, "application/json", new AsyncHttpResponseHandler() {
+        client.post(null, "https://mojspasilac.asprogram.com/api/prijave/spasi", bodySE, "application/json", new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] response) {
                 // called when response HTTP status is "200 OK"
                 Toast.makeText(getApplicationContext(), "Spasen "+id_prijave, Toast.LENGTH_SHORT).show();
+                postojiPrijava=false;
+                spasen.setEnabled(false);
             }
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
                 // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                Toast.makeText(getApplicationContext(), "Nije Spasen!!!!! "+statusCode, Toast.LENGTH_SHORT).show();
                 Log.i("ws", "---->>onFailure : " + statusCode);
             }
 
@@ -194,6 +201,9 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
         mojMarker = mMap.addMarker(new MarkerOptions()
                 .position(mojaLokacija)
                 .title("Moja Lokacija"));
+        /*mojMarker=mMap.addMarker(new MarkerOptions()
+                .position(mojaLokacija)
+                .icon(BitmapDescriptorFactory.fromResource(R.drawable.persons)));*/
     }
 
     @Override
@@ -380,6 +390,7 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
                     id_prijave=j.getInt("id_prijave");
                    // Toast.makeText(PutanjaVozilaActivity.this, j.toString(), Toast.LENGTH_SHORT).show();
                     postojiPrijava=true;
+                    spasen.setEnabled(true);
                     //crtaj(mMap);
 
                 } catch (JSONException e) {
