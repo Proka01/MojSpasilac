@@ -9,12 +9,20 @@
     <div class="admin-content">
       <div id="prijave">
         <h1>Lista prijava</h1>
-        {{prijave}}
+        <div v-for="prijava in prijave" :key="prijava.cekanje" style="border: 1px solid black">
+          <p>prijava {{prijava.id_prijave}}</p>
+          <p>{{formatirajVreme(prijava.cekanje)}}</p>
+        </div>
+        <!-- {{prijave}} -->
       </div>
       <Map id="map" v-bind:prijave="prijave" v-bind:vozila="vozila" />
       <div id="vozila">
         <h1>Lista vozila</h1>
-        {{vozila}}
+        <div v-for="vozilo in vozila" :key="vozilo.id_vozila" style="border: 1px solid black">
+          <p>{{vozilo.username}}</p>
+          <p>{{vozilo.kapacitet}}</p>
+        </div>
+        <!-- {{vozila}} -->
       </div>
     </div>
   </div>
@@ -36,12 +44,46 @@ export default {
       vozila:[]
     }
   },
+  computed:{
+    vreme(){
+      return new Date();
+    }
+  },
   methods:{
+    formatirajVreme(razlika){
+      var sekunde=razlika%60;
+      var minuti=parseInt(razlika/60);
+      var sati=parseInt(minuti/60);
+      minuti=minuti%60;
+      if(sekunde<10)
+        sekunde="0"+sekunde;
+      if(minuti<10)
+        minuti="0"+minuti;
+      return sati+":"+minuti+":"+sekunde;
+    },
+    obradiPrijave(){
+      console.log("POZVAO");
+      for(var prijava of this.prijave){
+        var razlika=new Date()-new Date(prijava.vreme)
+        razlika=parseInt(razlika/1000);
+        prijava.cekanje=razlika;
+      }
+    },
+    obradiPrijave2(){
+      this.prijave.push();
+      //this.prijave.pop();
+      for(var prijava of this.prijave){
+        prijava.cekanje++;
+      }
+    },
+
     ucitajPrijave(){
+      console.log("UcitajPrijave");
       var self=this;
       getPrijave().then(function (response) {
             console.log("Prijave",response.data);
             self.prijave=response.data;
+            self.obradiPrijave();
           }).catch(function (error) {
             console.log("ERROR");
             console.log(error); 
@@ -68,6 +110,11 @@ export default {
     console.log("USO");
     this.ucitajPrijave();
     this.ucitajVozila();
+    setInterval(()=>{
+      this.ucitajPrijave();
+      this.ucitajVozila();
+    }, 10000);
+    setInterval(()=>{this.obradiPrijave2()},1000);
   }
   
 }
