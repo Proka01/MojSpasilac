@@ -47,6 +47,7 @@ const prijave = {
         if(lista[i].id_korisnika == id_korisnika) return lista[i];
       }
       console.log("prazan" + id_korisnika);
+      return null;
     } catch (err) {
     throw err;
   }
