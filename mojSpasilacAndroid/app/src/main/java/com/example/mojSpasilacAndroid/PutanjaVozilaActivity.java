@@ -92,7 +92,7 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
         LatLng mojaLokacija = new LatLng(mojaLokacijaX,mojaLokacijaY);
         LatLng lokacijaCilj = new LatLng(lokacijaX,lokacijaY);
 
-        if(brojOsoba==1) {
+        /*if(brojOsoba==1) {
             mMap.addMarker(new MarkerOptions()
                     .position(lokacijaCilj));
                     //.icon(BitmapDescriptorFactory.fromResource(R.drawable.person)));
@@ -117,7 +117,7 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
 
         CameraUpdate cu = CameraUpdateFactory.newLatLngBounds(bounds, width, height, padding);
 
-        mMap.animateCamera(cu);
+        mMap.animateCamera(cu);*/
 
 
     }

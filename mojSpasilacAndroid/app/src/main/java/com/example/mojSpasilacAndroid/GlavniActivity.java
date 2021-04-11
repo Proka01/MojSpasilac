@@ -106,7 +106,7 @@ public class GlavniActivity extends AppCompatActivity implements AdapterView.OnI
 
                 osobe.add(osoba);
                 broj_dodatih_osoba++;
-                tv_broj_osoba.setText(String.valueOf(broj_dodatih_osoba));
+                tv_broj_osoba.setText("   "+String.valueOf(broj_dodatih_osoba));
             }
         });
 
