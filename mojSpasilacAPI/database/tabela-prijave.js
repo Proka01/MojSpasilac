@@ -38,6 +38,20 @@ const prijave = {
     } catch (err) {
     throw err;
   }
+  },
+  update: async function(id_prijave){
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      const res = await conn.query("UPDATE "+tabela+" SET aktivna_prijava=0 WHERE id_prijave=?", [id_prijave]);
+      console.log(res);
+      if(res.affectedRows==0)
+        throw new Error('Nije uspelo upisivanje u bazu');
+      conn.end();
+      return res;
+    } catch (err) {
+      throw err;
+    }
   }
 }
 

@@ -36,7 +36,7 @@ async function lokacijaZaSpasioca(req, res)
   try{
     if(req.dekriptovan.id_tipa_korisnika != 3){
         res.status(403).end();
-        console.log("nije admin");
+        console.log("nije spasilac");
         return;
     }
     const t = await vozila.svaVozila();
@@ -49,9 +49,20 @@ catch(err){
   
 }
 }
+async function spasi(req, res)
+{
+  if(req.dekriptovan.id_tipa_korisnika != 3){
+    res.status(403).end();
+    console.log("nije spasilac");
+    return;
+  }
+  const s = await prijave.update(req.body.id_prijave);
+  res.status(200).json(s);
+}
 
 module.exports = {
   novaPrijava,
   aktivnePrijave,
-  lokacijaZaSpasioca
+  lokacijaZaSpasioca,
+  spasi
 };

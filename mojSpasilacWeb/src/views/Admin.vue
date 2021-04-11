@@ -11,7 +11,7 @@
         <h1>Lista prijava</h1>
         {{prijave}}
       </div>
-      <Map id="map"/>
+      <Map id="map" v-bind:prijave="prijave" v-bind:vozila="vozila" />
       <div id="vozila">
         <h1>Lista vozila</h1>
         {{vozila}}

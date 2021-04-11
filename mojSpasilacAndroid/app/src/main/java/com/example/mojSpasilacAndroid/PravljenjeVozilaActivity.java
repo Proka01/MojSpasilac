@@ -39,6 +39,7 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
     private Button prijaviVozilo;
     private float lokacijaVozilaX;
     private float lokacijaVozilaY;
+    private int kapacitet;
 
     public SharedPreferences sharedPreferences;
     SharedPreferences.Editor sharedPreferencesEditor;
@@ -94,8 +95,6 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
                     Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(lokacijaVozilaY) + "\nLatitude:" + Double.toString(lokacijaVozilaX), Toast.LENGTH_SHORT).show();
                     posaljiVozilo();
 
-                    startActivity(new Intent(PravljenjeVozilaActivity.this, PutanjaVozilaActivity.class));
-                    finish();
 
                 } else {
 
@@ -204,33 +203,44 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
         sharedPreferencesEditor = sharedPreferences.edit();
         String token = sharedPreferences.getString("Token","");
         client.setAuthenticationPreemptive(true);
+
         client.addHeader("Authorization", "Bearer " + token);
-        try {
-            bodyJSON.put("kapacitet", Integer.parseInt(brojMesta.getText().toString()));
-            bodyJSON.put("lokacija_vozila_x", lokacijaVozilaX);
-            bodyJSON.put("lokacija_vozila_y", lokacijaVozilaY);
-            //sharedPreferencesEditor.putFloat("lokacija_vozila_x",lokacijaVozilaX);///01:30am
-           // sharedPreferencesEditor.putFloat("lokacija_vozila_y",lokacijaVozilaY);
-            bodySE = new StringEntity(bodyJSON.toString());
-        } catch (UnsupportedEncodingException | JSONException e) {
-            e.printStackTrace();
+        if(brojMesta.getText().toString().equals(""))
+        {
+            Toast.makeText(this, "You did not enter a username", Toast.LENGTH_SHORT).show();
         }
-
-        client.post(null, "https://mojspasilac.asprogram.com/api/vozila", bodySE, "application/json", new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-                // called when response HTTP status is "200 OK"
-                Toast.makeText(PravljenjeVozilaActivity.this, "Vozilo uspesno prijavljeno!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(PravljenjeVozilaActivity.this, PutanjaVozilaActivity.class));
-                finish();
+        else {
+            kapacitet=Integer.parseInt(brojMesta.getText().toString());
+            try {
+                bodyJSON.put("kapacitet", kapacitet);
+                bodyJSON.put("lokacija_vozila_x", lokacijaVozilaX);
+                bodyJSON.put("lokacija_vozila_y", lokacijaVozilaY);
+                //sharedPreferencesEditor.putFloat("lokacija_vozila_x",lokacijaVozilaX);///01:30am
+                // sharedPreferencesEditor.putFloat("lokacija_vozila_y",lokacijaVozilaY);
+                bodySE = new StringEntity(bodyJSON.toString());
+            } catch (UnsupportedEncodingException | JSONException e) {
+                e.printStackTrace();
             }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                Toast.makeText(PravljenjeVozilaActivity.this, "Greska!!! "+statusCode, Toast.LENGTH_SHORT).show();
-            }
+            client.post(null, "https://mojspasilac.asprogram.com/api/vozila", bodySE, "application/json", new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                    // called when response HTTP status is "200 OK"
+                    Toast.makeText(PravljenjeVozilaActivity.this, "Vozilo uspesno prijavljeno!", Toast.LENGTH_SHORT).show();
 
-        });
+                    Intent intent = new Intent(PravljenjeVozilaActivity.this, PutanjaVozilaActivity.class);
+                    intent.putExtra("kapacitet", kapacitet);
+                    startActivity(intent);
+                    finish();
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                    Toast.makeText(PravljenjeVozilaActivity.this, "Greska!!! " + statusCode, Toast.LENGTH_SHORT).show();
+                }
+
+            });
+        }
     }
 
     @Override
