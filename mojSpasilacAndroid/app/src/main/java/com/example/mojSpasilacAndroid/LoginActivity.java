@@ -118,7 +118,7 @@ public class LoginActivity extends AppCompatActivity {
                 // called when response HTTP status is "200 OK"
                 sharedPreferences = getApplicationContext().getSharedPreferences("KorisniciDB", MODE_PRIVATE);
                 sharedPreferencesEditor = sharedPreferences.edit();
-
+                int id_tipa_korisnika=0;
                 String token = null;
                 JSONObject jsonObject = new JSONObject();
                 try {
@@ -129,6 +129,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 try {
                     token = jsonObject.getString("token");
+                    id_tipa_korisnika=jsonObject.getInt("id_tipa_korisnika");
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -137,7 +138,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 sharedPreferencesEditor.putString("Username", userName);
                 sharedPreferencesEditor.putString("Password", userPassword);
-                sharedPreferencesEditor.putInt("id_tipa_korisnika",3);// MOZDA I NE TREBA OVO
+                sharedPreferencesEditor.putInt("id_tipa_korisnika",id_tipa_korisnika);// MOZDA I NE TREBA OVO
                 eName.setText(userName);
                 ePassword.setText(userPassword);
 
@@ -146,7 +147,12 @@ public class LoginActivity extends AppCompatActivity {
 
                 Log.i("ws", "-----------KorisniciDB" + sharedPreferences.getAll().toString());
 
-                startActivity(new Intent(LoginActivity.this, GlavniActivity.class));
+                if(id_tipa_korisnika==3)
+                    startActivity(new Intent(LoginActivity.this, PravljenjeVozilaActivity.class));
+                else if(id_tipa_korisnika==2)
+                {
+                    startActivity(new Intent(LoginActivity.this, GlavniActivity.class));
+                }
                 finish();
 
             }

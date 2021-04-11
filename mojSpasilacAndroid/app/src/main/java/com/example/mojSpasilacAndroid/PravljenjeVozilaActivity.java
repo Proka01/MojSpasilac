@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -36,8 +37,9 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
 
     private EditText brojMesta;
     private Button prijaviVozilo;
-    private double lokacijaVozilaX;
-    private double lokacijaVozilaY;
+    private float lokacijaVozilaX;
+    private float lokacijaVozilaY;
+    private int kapacitet;
 
     public SharedPreferences sharedPreferences;
     SharedPreferences.Editor sharedPreferencesEditor;
@@ -85,12 +87,15 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
 
                 if (locationTrack.canGetLocation()) {
 
-                    lokacijaVozilaX = locationTrack.getLatitude();
-                    lokacijaVozilaY = locationTrack.getLongitude();
+                    lokacijaVozilaX = (float) locationTrack.getLatitude();
+                    lokacijaVozilaY = (float) locationTrack.getLongitude();
 
                     String ispis = String.valueOf(lokacijaVozilaY) + " " + String.valueOf(lokacijaVozilaX);
                     ///textView.setText(ispis);
                     Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(lokacijaVozilaY) + "\nLatitude:" + Double.toString(lokacijaVozilaX), Toast.LENGTH_SHORT).show();
+                    posaljiVozilo();
+
+
                 } else {
 
                     locationTrack.showSettingsAlert();
@@ -106,6 +111,7 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
 
     }
     ////////////////////////////////////////////////////KRAJ DOBIJANJA LOKACIJE
+
 
     //////////////////////////////////////////////////////////////
     private ArrayList findUnAskedPermissions(ArrayList wanted) {
@@ -197,32 +203,44 @@ public class PravljenjeVozilaActivity extends AppCompatActivity implements Adapt
         sharedPreferencesEditor = sharedPreferences.edit();
         String token = sharedPreferences.getString("Token","");
         client.setAuthenticationPreemptive(true);
+
         client.addHeader("Authorization", "Bearer " + token);
-        try {
-            bodyJSON.put("kapacitet", Integer.parseInt(brojMesta.getText().toString()));
-            bodyJSON.put("lokacija_vozila_x", lokacijaVozilaX);
-            bodyJSON.put("lokacija_vozila_y", lokacijaVozilaY);
-            bodySE = new StringEntity(bodyJSON.toString());
-        } catch (UnsupportedEncodingException | JSONException e) {
-            e.printStackTrace();
+        if(brojMesta.getText().toString().equals(""))
+        {
+            Toast.makeText(this, "You did not enter a username", Toast.LENGTH_SHORT).show();
         }
-
-        client.post(null, "https://mojspasilac.asprogram.com/api/vozila", bodySE, "application/json", new AsyncHttpResponseHandler() {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
-                // called when response HTTP status is "200 OK"
-                Toast.makeText(PravljenjeVozilaActivity.this, "Vozilo uspesno prijavljeno!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(PravljenjeVozilaActivity.this, PutanjaVozilaActivity.class));
-                finish();
+        else {
+            kapacitet=Integer.parseInt(brojMesta.getText().toString());
+            try {
+                bodyJSON.put("kapacitet", kapacitet);
+                bodyJSON.put("lokacija_vozila_x", lokacijaVozilaX);
+                bodyJSON.put("lokacija_vozila_y", lokacijaVozilaY);
+                //sharedPreferencesEditor.putFloat("lokacija_vozila_x",lokacijaVozilaX);///01:30am
+                // sharedPreferencesEditor.putFloat("lokacija_vozila_y",lokacijaVozilaY);
+                bodySE = new StringEntity(bodyJSON.toString());
+            } catch (UnsupportedEncodingException | JSONException e) {
+                e.printStackTrace();
             }
 
-            @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
-                Toast.makeText(PravljenjeVozilaActivity.this, "Greska!!! "+statusCode, Toast.LENGTH_SHORT).show();
+            client.post(null, "https://mojspasilac.asprogram.com/api/vozila", bodySE, "application/json", new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                    // called when response HTTP status is "200 OK"
+                    Toast.makeText(PravljenjeVozilaActivity.this, "Vozilo uspesno prijavljeno!", Toast.LENGTH_SHORT).show();
 
-            }
+                    Intent intent = new Intent(PravljenjeVozilaActivity.this, PutanjaVozilaActivity.class);
+                    intent.putExtra("kapacitet", kapacitet);
+                    startActivity(intent);
+                    finish();
+                }
 
-        });
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                    Toast.makeText(PravljenjeVozilaActivity.this, "Greska!!! " + statusCode, Toast.LENGTH_SHORT).show();
+                }
+
+            });
+        }
     }
 
     @Override
