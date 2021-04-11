@@ -28,6 +28,18 @@ const prijave = {
       throw err;
     }
   },
+  prijavaZaVozilo(id_vozila){
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      const res = await conn.query("SELECT * from vozila JOIN vozila_prijave USING(id_vozila) JOIN prijave USING(id_prijave) WHERE aktivna_prijava=1 AND id_vozila=? LIMIT 1",[id_vozila]);
+      //console.log(res);
+      conn.end();
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  },
   nadjiLokaciju(lista, id_korisnika){
     try{
       for(let i = 0; i < lista.length; i++)

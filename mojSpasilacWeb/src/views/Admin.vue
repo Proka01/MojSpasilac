@@ -13,7 +13,7 @@
           <p>prijava {{prijava.id_prijave}}</p>
           <p>{{formatirajVreme(prijava.cekanje)}}</p>
         </div>
-        <!-- {{prijave}} -->
+        {{prijave}}
       </div>
       <Map id="map" v-bind:prijave="prijave" v-bind:vozila="vozila" />
       <div id="vozila">
@@ -22,7 +22,7 @@
           <p>{{vozilo.username}}</p>
           <p>{{vozilo.kapacitet}}</p>
         </div>
-        <!-- {{vozila}} -->
+        {{vozila}}
       </div>
     </div>
   </div>
