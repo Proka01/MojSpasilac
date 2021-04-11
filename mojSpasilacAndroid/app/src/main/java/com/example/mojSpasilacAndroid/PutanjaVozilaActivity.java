@@ -7,15 +7,18 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -28,6 +31,7 @@ import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -36,9 +40,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.entity.StringEntity;
 
 import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
@@ -51,8 +59,9 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
 
     private double mojaLokacijaX;
     private double mojaLokacijaY;
+    private boolean postojiPrijava;
+    private int id_prijave;
 
-    private int brojOsoba;
     LatLngBounds.Builder builder = new LatLngBounds.Builder();
 
     public SharedPreferences sharedPreferences;
@@ -65,20 +74,7 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
     private final static int ALL_PERMISSIONS_RESULT = 101;
     LocationTrack locationTrack;
 
-    long startTime = 0;
-
-    //runs without a timer by reposting this handler at the end of the runnable
-    Handler timerHandler = new Handler();
-    Runnable timerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            long millis = System.currentTimeMillis() - startTime;
-
-
-
-            timerHandler.postDelayed(this, 500);
-        }
-    };
+    Marker mojMarker;
 
 
     @Override
@@ -90,8 +86,44 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        Button spasen = findViewById(R.id.button);
+        spasen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendIdPrijave();
+            }
+        });
 
+    }
+    private void sendIdPrijave()
+    {
+        AsyncHttpClient client = new AsyncHttpClient(true,80,443);
+        JSONObject bodyJSON=new JSONObject();
+        StringEntity bodySE = null;
+        client.setAuthenticationPreemptive(true);
+        SharedPreferences sharedPreferences;
+        sharedPreferences = getApplicationContext().getSharedPreferences("KorisniciDB", MODE_PRIVATE);
+        String token= sharedPreferences.getString("Token", "");
+        client.addHeader("Authorization", "Bearer " + token);
+        try {
+            bodyJSON.put("id_prijave",id_prijave);
+            bodySE = new StringEntity(bodyJSON.toString());
+        } catch (UnsupportedEncodingException | JSONException e) {
+            e.printStackTrace();
+        }
+        client.post(null, "https://mojspasilac.asprogram.com/api/prijave/spasen", bodySE, "application/json", new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                // called when response HTTP status is "200 OK"
+                Toast.makeText(getApplicationContext(), "Spasen "+id_prijave, Toast.LENGTH_SHORT).show();
+            }
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+                Log.i("ws", "---->>onFailure : " + statusCode);
+            }
 
+        });
     }
 
     /**
@@ -103,6 +135,67 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
      * it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      */
+    private void getMojaLokacija()
+    {
+        locationTrack = new LocationTrack(PutanjaVozilaActivity.this);
+        if (locationTrack.canGetLocation()) {
+
+            mojaLokacijaX = locationTrack.getLatitude();
+            mojaLokacijaY = locationTrack.getLongitude();
+
+            //String ispis = String.valueOf(mojaLokacijaY) + " " + String.valueOf(mojaLokacijaX);
+            //Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(mojaLokacijaY) + "\nLatitude:" + Double.toString(mojaLokacijaX), Toast.LENGTH_SHORT).show();
+        } else {
+            locationTrack.showSettingsAlert();
+        }
+    }
+    private void sendMyLocation()
+    {
+        AsyncHttpClient client = new AsyncHttpClient(true,80,443);
+        JSONObject bodyJSON=new JSONObject();
+        StringEntity bodySE = null;
+        client.setAuthenticationPreemptive(true);
+        SharedPreferences sharedPreferences;
+        sharedPreferences = getApplicationContext().getSharedPreferences("KorisniciDB", MODE_PRIVATE);
+        String token= sharedPreferences.getString("Token", "");
+        client.addHeader("Authorization", "Bearer " + token);
+        try {
+            bodyJSON.put("lokacija_vozila_x",mojaLokacijaX);
+            bodyJSON.put("lokacija_vozila_y",mojaLokacijaY);
+            bodySE = new StringEntity(bodyJSON.toString());
+        } catch (UnsupportedEncodingException | JSONException e) {
+            e.printStackTrace();
+        }
+        client.post(null, "https://mojspasilac.asprogram.com/api/vozila/lokacija", bodySE, "application/json", new AsyncHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+                // called when response HTTP status is "200 OK"
+
+                Toast.makeText(getApplicationContext(), "SVE OK!!!!", Toast.LENGTH_SHORT).show();
+
+
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+                // called when response HTTP status is "4XX" (eg. 401, 403, 404)
+
+                Log.i("ws", "---->>onFailure : " + statusCode);
+            }
+
+        });
+    }
+
+    private void drawMyLocation()
+    {
+        LatLng mojaLokacija = new LatLng(mojaLokacijaX,mojaLokacijaY);
+        mMap.clear();
+        if(postojiPrijava)crtaj(mMap);
+        mojMarker = mMap.addMarker(new MarkerOptions()
+                .position(mojaLokacija)
+                .title("Moja Lokacija"));
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -114,36 +207,33 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
         //get the permissions we have asked for before but are not granted..
         //we will store this in a global list to access later.
 
-
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
 
             if (permissionsToRequest.size() > 0)
                 requestPermissions((String[]) permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
         }
+        getMojaLokacija();
 
-        /////////////////////DOBIJANJE LOKACIJE
-        locationTrack = new LocationTrack(PutanjaVozilaActivity.this);
-        if (locationTrack.canGetLocation()) {
+        builder.include(new LatLng(mojaLokacijaX,mojaLokacijaY));
 
-            mojaLokacijaX = locationTrack.getLatitude();
-            mojaLokacijaY = locationTrack.getLongitude();
-
-            String ispis = String.valueOf(mojaLokacijaY) + " " + String.valueOf(mojaLokacijaX);
-            Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(mojaLokacijaY) + "\nLatitude:" + Double.toString(mojaLokacijaX), Toast.LENGTH_SHORT).show();
-        } else {
-
-            locationTrack.showSettingsAlert();
-        }
-        LatLng mojaLokacija = new LatLng(mojaLokacijaX,mojaLokacijaY);
-        mMap.addMarker(new MarkerOptions()
-                .position(mojaLokacija)
-                .title("Marker in Sydney"));
-
-
-        builder.include(mojaLokacija);
-
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                PutanjaVozilaActivity.this.runOnUiThread(new Runnable(){
+                    @Override
+                    public void run() {
+                        //Toast.makeText(PutanjaVozilaActivity.this, "KURAC RADI", Toast.LENGTH_SHORT).show();
+                        if(!postojiPrijava)getPrijavu(mMap);
+                        getMojaLokacija();
+                        //Toast.makeText(getApplicationContext(), "Longitude:" + Double.toString(mojaLokacijaY) + "\nLatitude:" + Double.toString(mojaLokacijaX), Toast.LENGTH_SHORT).show();
+                        sendMyLocation();
+                        drawMyLocation();
+                    }
+                });
+            }
+        }, 2000,5000);
         //getPrijavu(mMap);
 
     }
@@ -227,21 +317,13 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
     }
     private void crtaj(GoogleMap map)
     {
-        //GET LOKACIJA
-        /*sharedPreferences = getApplicationContext().getSharedPreferences("KorisniciDB", MODE_PRIVATE);
-        sharedPreferencesEditor = sharedPreferences.edit();
-        mojaLokacijaX=sharedPreferences.getFloat("lokacija_vozila_x",15);
-        mojaLokacijaY=sharedPreferences.getFloat("lokacija_vozila_y",0);*/
-
-        //Toast.makeText(PutanjaVozilaActivity.this, mojaLokacijaX+" "+mojaLokacijaY, Toast.LENGTH_SHORT).show();
-
 
         LatLng lokacijaCilj = new LatLng(lokacijaX,lokacijaY);
         //Toast.makeText(PutanjaVozilaActivity.this, lokacijaX+" "+lokacijaY, Toast.LENGTH_SHORT).show();
 
         //TODO
-        brojOsoba = getIntent().getIntExtra("kapacitet",1);
-        if(brojOsoba==1) {
+        int brojOsoba = getIntent().getIntExtra("kapacitet", 1);
+        if(brojOsoba ==2) {
             mMap.addMarker(new MarkerOptions()
                     .position(lokacijaCilj)
                     .icon(BitmapDescriptorFactory.fromResource(R.drawable.person)));
@@ -295,8 +377,10 @@ public class PutanjaVozilaActivity extends FragmentActivity implements OnMapRead
                     Log.i("url ",j.toString());
                     lokacijaX= (float) j.getJSONObject("prijava").getDouble("lokacija_prijave_x");
                     lokacijaY= (float) j.getJSONObject("prijava").getDouble("lokacija_prijave_y");
+                    id_prijave=j.getInt("id_prijave");
                    // Toast.makeText(PutanjaVozilaActivity.this, j.toString(), Toast.LENGTH_SHORT).show();
-                    crtaj(mMap);
+                    postojiPrijava=true;
+                    //crtaj(mMap);
 
                 } catch (JSONException e) {
                     Log.i("rec","############## greska");

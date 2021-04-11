@@ -98,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private void validate(String userName, String userPassword)
     {
-        AsyncHttpClient client = new AsyncHttpClient();
+        AsyncHttpClient client = new AsyncHttpClient(true,80,443);
         JSONObject bodyJSON=new JSONObject();
         StringEntity bodySE = null;
 
@@ -148,7 +148,7 @@ public class LoginActivity extends AppCompatActivity {
                 Log.i("ws", "-----------KorisniciDB" + sharedPreferences.getAll().toString());
 
                 if(id_tipa_korisnika==3)
-                    startActivity(new Intent(LoginActivity.this, PravljenjeVozilaActivity.class));
+                    startActivity(new Intent(LoginActivity.this, PutanjaVozilaActivity.class));
                 else if(id_tipa_korisnika==2)
                 {
                     startActivity(new Intent(LoginActivity.this, GlavniActivity.class));
