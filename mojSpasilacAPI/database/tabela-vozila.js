@@ -1,5 +1,5 @@
 const pool = require('./connection');
-const prijave = require('../database/tabela-prijave');
+const prijave = require('./tabela-prijave');
 const tabela='vozila';
 const tabela_korisnici = 'korisnici';
 const tabela_prijave = 'prijave';
@@ -14,6 +14,26 @@ const vozila = {
       console.log(res); 
       if(res.affectedRows==0)
         throw new Error('Nije uspelo upisivanje u bazu');
+      conn.end();
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  },
+  svaVozila2: async function(){
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      const res = await conn.query("SELECT vozila.*, username from "+tabela+" JOIN korisnici USING(id_korisnika)");
+      //const recepti=res[0];
+      var lista=await this.svaVozila();
+      for(vozilo of res)
+      {
+          vozilo.prijava= await prijave.nadjiLokaciju(lista,vozilo.id_korisnika)
+          if(vozilo.prijava!=null)
+            vozilo.prijava=vozilo.prijava.prijava;
+          
+      }
       conn.end();
       return res;
     } catch (err) {

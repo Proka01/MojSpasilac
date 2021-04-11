@@ -22,7 +22,7 @@ async function vratiVozila(req, res){
             console.log("nije admin");
             return;
         }
-        const s = await vozila.svaVozila();
+        const s = await vozila.svaVozila2();
         res.status(200).json(s);
     }
     catch(err){
