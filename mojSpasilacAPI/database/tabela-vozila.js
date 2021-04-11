@@ -79,7 +79,21 @@ const vozila = {
     } catch (err) {
       throw err;
     }
-  }
+  },
+  insertVozilaPrijave: async function(id_vozila,id_prijave){
+    let conn;
+    try {
+      conn = await pool.getConnection();
+      const res = await conn.query("INSERT INTO vozila_prijave (id_vozila,id_prijave) VALUES (?,?)", [id_vozila,id_prijave]);
+      console.log(res); 
+      if(res.affectedRows==0)
+        throw new Error('Nije uspelo upisivanje u bazu');
+      conn.end();
+      return res;
+    } catch (err) {
+      throw err;
+    }
+  },
 }
 
 module.exports=vozila;

@@ -45,8 +45,19 @@ async function upisiLok(req, res){
       res.status(500).json(err);
     }
 }
+async function dodeliPrijavu(req, res){
+  try{
+      const s = await vozila.insertVozilaPrijave(req.body.id_vozila, req.body.id_prijave);
+      res.status(200).json(s);
+  }
+  catch(err){
+      console.error(err);
+      res.status(500).json(err);
+    }
+}
 module.exports = {
   dodajVozilo,
   vratiVozila,
-  upisiLok
+  upisiLok,
+  dodeliPrijavu
 };

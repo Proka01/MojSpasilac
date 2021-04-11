@@ -8,7 +8,7 @@
       <div style="margin-left:300px">
         <b-form-select class="selekt" v-model="izbabranaPrijava" :options="prijaveOptions"></b-form-select>
         <b-form-select class="selekt" v-model="izbabranoVozilo" :options="vozilaOptions"></b-form-select>
-
+        <b-button class="selekt" @click="dodeli()">Dodeli</b-button>
       </div>
     </nav>
     <div class="admin-content">
@@ -81,6 +81,7 @@ export default {
         if(prijava.dodeljena==false)
           this.prijaveOptions.push({value:prijava.id_prijave,text:"prijava"+prijava.id_prijave})
       }
+      this.obradiVozila();
     },
     obradiPrijave2(){
       this.prijave.push();
@@ -143,7 +144,10 @@ export default {
             self.poruka=error.response.data.error;
             console.log(self.poruka);
           });
-    },
+      },
+      dodeli(){
+
+      },
     referesh(){
       this.ucitajPrijave();
       this.ucitajVozila();  
