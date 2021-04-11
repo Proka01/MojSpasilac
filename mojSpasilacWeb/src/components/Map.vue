@@ -6,13 +6,13 @@
     >
         <GmapMarker v-for="prijava in prijave" :key="'prijava'+prijava.id_prijave"
             :position="{lat: prijava.lokacija_prijave_x, lng:prijava.lokacija_prijave_y}"
-            label="prijava"
+            :label="'prijava '+prijava.id_prijave"
             color="blue"
             icon="https://developers.google.com/maps/documentation/javascript/examples/full/images/beachflag.png"
         />
         <GmapMarker v-for="vozilo in vozila" :key="'vozilo'+vozilo.id_vozila"
             :position="{lat: vozilo.lokacija_vozila_x, lng:vozilo.lokacija_vozila_y}"
-            label="vozilo"
+            :label="vozilo.username"
         />
     </GmapMap>
   </div>

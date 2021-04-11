@@ -18,7 +18,7 @@
           <p>prijava {{prijava.id_prijave}}</p>
           <p>{{formatirajVreme(prijava.cekanje)}}</p>
         </div>
-        {{prijave}}
+        <!-- {{prijave}} -->
       </div>
         <Map id='map'  v-bind:prijave="prijave" v-bind:vozila="vozila" />
       <div id="vozila">
@@ -27,7 +27,7 @@
           <p>{{vozilo.username}}</p>
           <p>{{vozilo.kapacitet}}</p>
         </div>
-        {{vozila}}
+        <!-- {{vozila}} -->
       </div>
     </div>
   </div>
@@ -36,7 +36,7 @@
 <script>
 // @ is an alias to /src
 import Map from "@/components/Map.vue";
-import {getPrijave,getVozila} from "@/apiCalls.js";
+import {getPrijave,getVozila,dodeliVoziluPrijavu} from "@/apiCalls.js";
 
 export default {
   name: 'Admin',
@@ -49,7 +49,8 @@ export default {
       vozila:[],
       vozilaOptions:[],
       prijaveOptions:[],
-      izbabranoVozilo:undefined
+      izbabranoVozilo:undefined,
+      izbabranaPrijava:undefined
     }
   },
   computed:{
@@ -71,15 +72,12 @@ export default {
     },
     obradiPrijave(){
       console.log("POZVAO");
-      this.prijaveOptions=[];
       for(var prijava of this.prijave){
         var razlika=new Date()-new Date(prijava.vreme)
         razlika=parseInt(razlika/1000);
         prijava.cekanje=razlika;
         if(prijava.dodeljena==undefined)
           prijava.dodeljena=false;
-        if(prijava.dodeljena==false)
-          this.prijaveOptions.push({value:prijava.id_prijave,text:"prijava"+prijava.id_prijave})
       }
       this.obradiVozila();
     },
@@ -92,6 +90,7 @@ export default {
     },
     obradiVozila(){
       this.vozilaOptions=[];
+      this.prijaveOptions=[];
       for(var vozilo of this.vozila){
         if(vozilo.prijava!=null)
         {
@@ -114,6 +113,11 @@ export default {
         else{
           this.vozilaOptions.push({value:vozilo.id_vozila,text:vozilo.username+" "+vozilo.kapacitet})
         }
+      }
+      for(var p of this.prijave)
+      {
+        if(p.dodeljena==false)
+          this.prijaveOptions.push({value:p.id_prijave,text:"prijava"+p.id_prijave})
       }
     },
     ucitajPrijave(){
@@ -145,13 +149,25 @@ export default {
             console.log(self.poruka);
           });
       },
-      dodeli(){
-
-      },
-    referesh(){
+      
+    refresh(){
       this.ucitajPrijave();
       this.ucitajVozila();  
-    }
+    },
+      dodeli(){
+        var self=this;
+        dodeliVoziluPrijavu(this.izbabranoVozilo,this.izbabranaPrijava).then(function (response) {
+            console.log("DODELIO",response);
+            self.refresh();
+          }).catch(function (error) {
+            console.log("ERROR");
+            console.log(error); 
+            self.greska=true;
+            self.poruka=error.response.data.error;
+            console.log(self.poruka);
+          });
+      },
+      
   },
   mounted(){
     console.log("USO");
